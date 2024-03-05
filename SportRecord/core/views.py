@@ -58,4 +58,9 @@ def formset_view(request):
     context['formset']= formset 
     return render(request, "home.html", context)
 
+def dashboard(request):
+    context = {}
+
+    return render(request, 'core/index.html', context)
+
 
