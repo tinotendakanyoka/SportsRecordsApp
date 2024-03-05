@@ -13,6 +13,16 @@ class Event(models.Model):
         return f"{self.name}"
     
 
+class House(models.Model):
+    name = models.CharField(max_length=255)
+    points = models.FloatField(default=0, null=False)
+    position = models.IntegerField(default=4)
+
+    def determine_position(self):
+        all_houses_queryset = self.objects.all()
+        
+
+
 class Student(models.Model):
     full_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
