@@ -1,27 +1,39 @@
 from django.db import models
-from django import forms
+from django.utils import timezone
 
-
-EVENT_TYPES = (
-    ('1', 'GENDER_EVENT_NAME'),
-)
-AGE_GROUPS = (
-    ("13 - 14", "UNDER 14"),
-
-)
-
+# Create your models here.
 class Event(models.Model):
-    event_type = forms.ChoiceField(choices = EVENT_TYPES)
+    name = models.CharField(primary_key=True, max_length=255, blank=True)
+    event_num = models.IntegerField(blank=False)   #, unique=True
+    is_boys_event = models.BooleanField(default=False)  
+    event_year = models.IntegerField(default=timezone.now().year)
+
+    
+    def __str__(self):
+        return f"{self.name}"
+    
 
 class Student(models.Model):
-    pass
-
-class House(models.Model):
-    pass
-
-class Record(models.Model):
-
     full_name = models.CharField(max_length=255)
-    age_group = forms.ChoiceField(choices = AGE_GROUPS)
+    date_of_birth = models.DateField()
+    gender = models.BooleanField(default=False) 
+    points = models.IntegerField(default=0)
+    
+    
     def __str__(self):
-        return f'{self}'
+        return f"{self.full_name}"
+    
+    
+
+
+class EventParticipation(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    position = models.IntegerField(default=0)
+    laptime_or_distance = models.CharField(max_length=255, default='')
+
+    class Meta:
+        unique_together = (('event', 'student'),)  
+
+    def __str__(self):
+        return f"{self.student.full_name} participating in {self.event.name}"
