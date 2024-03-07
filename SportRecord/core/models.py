@@ -16,9 +16,20 @@ class Event(models.Model):
 class House(models.Model):
     name = models.CharField(max_length=255)
     points = models.FloatField(default=0, null=False)
+    house_color = models.CharField(max_length=25, null=False, blank=False, default='red')
+    position = models.IntegerField(default=4)
+
 
     def determine_position(self):
-        all_houses_queryset = self.objects.all()
+        ordered_houses_queryset = enumerate(self.objects.order_by("-points"), start=1)
+
+        for index, house in ordered_houses_queryset:
+            house.position == index
+            house.save()
+
+    def __str__(self):
+        return f'{self.name}: {self.points} Points'
+
         
 
 

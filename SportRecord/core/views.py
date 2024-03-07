@@ -60,7 +60,8 @@ def formset_view(request):
 
 def dashboard(request):
 
-    ordered_houses = House.objects.all().order_by('-points').values()
+
+    ordered_houses = enumerate(House.objects.all().order_by('-points'), start=1)
     context = {
         'houses': ordered_houses,
         'range': [1,2,3,4],
