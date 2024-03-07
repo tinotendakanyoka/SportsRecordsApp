@@ -60,11 +60,15 @@ def formset_view(request):
 
 def dashboard(request):
 
+    boys_events_qs = Event.objects.filter(is_boys_event=True).order_by('name')
+    girls_events_qs = Event.objects.filter(is_boys_event=False).order_by('name')
+
 
     ordered_houses = enumerate(House.objects.all().order_by('-points'), start=1)
     context = {
         'houses': ordered_houses,
-        'range': [1,2,3,4],
+        'boys_events': boys_events_qs,
+        'girls_events': girls_events_qs,
     }
 
     return render(request, 'core/index.html', context)
