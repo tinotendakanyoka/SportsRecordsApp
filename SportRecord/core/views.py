@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Event, Student, EventParticipation, House
-from .forms import EventForm, StudentForm, EventParticipationForm, EventParticipationFormSet, GeeksForm, GeeksFormFormSet
+from .forms import EventForm, StudentForm, EventParticipationForm
 from django.forms import modelformset_factory
 
 class UpdateEventsView(View):
@@ -47,16 +47,7 @@ class UpdateStudentsView(View):
         return render(request, 'update_student.html', {'formset': formset})
     
     
-def formset_view(request): 
-    context ={} 
-  
-    # creating a formset 
-    #GeeksFormSet = modelformset_factory(GeeksForm) 
-    formset = GeeksFormFormSet() 
-      
-    # Add the formset to context dictionary 
-    context['formset']= formset 
-    return render(request, "home.html", context)
+
 
 def dashboard(request):
 
@@ -72,5 +63,29 @@ def dashboard(request):
     }
 
     return render(request, 'core/index.html', context)
+
+
+def CreateMultipleParticipationsView(request, pk):
+
+    event = Event.objects.get(pk=pk)  
+    EventParticipationFormSet = modelformset_factory(EventParticipation, fields=('id', 'event', 'student', 'attempt1', 'attempt2', 'attempt3', 'laptime_or_distance', 'position') , extra=12)
+    form = EventParticipationFormSet(queryset=EventParticipation.objects.none(), initial=[{'event': event}]) 
+
+
+    if request.method =='POST':
+        form = EventParticipationFormSet(request.POST)
+
+        try:
+
+            form.save(commit=False)
+            for instance in form:
+                if not instance.is_valid():
+                    pass
+                    
+                elif instance.is_valid():
+                    instance.save()
+        except:
+            pass
+        return redirect('edit_data') 
 
 
