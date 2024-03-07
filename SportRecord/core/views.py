@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Event, Student, EventParticipation
+from .models import Event, Student, EventParticipation, House
 from .forms import EventForm, StudentForm, EventParticipationForm, EventParticipationFormSet, GeeksForm, GeeksFormFormSet
 from django.forms import modelformset_factory
 
@@ -11,7 +11,7 @@ class UpdateEventsView(View):
         formset = modelformset_factory(Event, form=EventForm , extra=0)
 
         formset = formset(queryset=queryset)
-        return render(request, 'update_event.html', {'formset': formset})
+        return render(request, 'core/update_event.html', {'formset': formset})
 
     def post(self, request):
         formset = modelformset_factory(Event, form=EventForm)
@@ -21,7 +21,7 @@ class UpdateEventsView(View):
                 if form.is_valid():
                     form.save()
             return redirect('events_update')
-        return render(request, 'update_event.html', {'formset': formset})
+        return render(request, 'core/update_event.html', {'formset': formset})
 
 
 
@@ -59,7 +59,12 @@ def formset_view(request):
     return render(request, "home.html", context)
 
 def dashboard(request):
-    context = {}
+
+    ordered_houses = House.objects.all().order_by('-points').values()
+    context = {
+        'houses': ordered_houses,
+        'range': [1,2,3,4],
+    }
 
     return render(request, 'core/index.html', context)
 

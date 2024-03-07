@@ -16,7 +16,6 @@ class Event(models.Model):
 class House(models.Model):
     name = models.CharField(max_length=255)
     points = models.FloatField(default=0, null=False)
-    position = models.IntegerField(default=4)
 
     def determine_position(self):
         all_houses_queryset = self.objects.all()
