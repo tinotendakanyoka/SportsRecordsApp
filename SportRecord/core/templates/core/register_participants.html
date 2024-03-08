@@ -28,7 +28,7 @@
                 <form>
                     {% csrf_token %}
                     <tr>
-                        <td id="studentname">{{ student.full_name }}</td>
+                        <td id="{{student.full_name}}">{{ student.full_name }}</td>
                         <td>{{ student.points }}</td>
                         <td>{{ student.house.name }}</td>
                         <td>{{ student.date_of_birth }}</td>
