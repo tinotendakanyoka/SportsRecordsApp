@@ -95,28 +95,28 @@ def CreateMultipleParticipationsView(request, event_name):
     
         
 
-    return render(request, 'create_event.html', {'form': form})
+    return render(request, 'core/create_event.html', {'form': form})
 
-    event = Event.objects.get(name=event_name)  
-    EventParticipationFormSet = modelformset_factory(EventParticipation, fields=('id', 'event', 'student', 'attempt1', 'attempt2', 'attempt3', 'laptime_or_distance', 'position') , extra=12)
-    form = EventParticipationFormSet(queryset=EventParticipation.objects.none(), initial=[{'event': event}]) 
+    # event = Event.objects.get(name=event_name)  
+    # EventParticipationFormSet = modelformset_factory(EventParticipation, fields=('id', 'event', 'student', 'attempt1', 'attempt2', 'attempt3', 'laptime_or_distance', 'position') , extra=12)
+    # form = EventParticipationFormSet(queryset=EventParticipation.objects.none(), initial=[{'event': event}]) 
 
 
-    if request.method =='POST':
-        form = EventParticipationFormSet(request.POST)
+    # if request.method =='POST':
+    #     form = EventParticipationFormSet(request.POST)
 
-        try:
+    #     try:
 
-            form.save(commit=False)
-            for instance in form:
-                if not instance.is_valid():
-                    pass
+    #         form.save(commit=False)
+    #         for instance in form:
+    #             if not instance.is_valid():
+    #                 pass
                     
-                elif instance.is_valid():
-                    instance.save()
-        except:
-            pass
-        return redirect('edit_data') 
+    #             elif instance.is_valid():
+    #                 instance.save()
+    #     except:
+    #         pass
+    #     return redirect('edit_data') 
 
 def register_participants(request, age_group, gender, event_name):
 
