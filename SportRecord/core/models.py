@@ -6,8 +6,22 @@ from django.db.models.signals import pre_save
 from django.forms import ChoiceField
 from django.db.models import Q
 
+AGE_GROUPS = (
+    ("U14", "U14"),
+    ("U15", "U15"),
+    ("U16", "U16"),
+    ("U17", "U17"),
+    ("U18", "U18"),
+    ("U20", "U20"),
+    ("OPEN", "OPEN"),
 
+)
 
+class AgeGroup(models.Model):
+    name = models.CharField(max_length=255, choices=AGE_GROUPS)
+
+    def __str__(self):
+        return self.name
 
 # Create your models here.
 class Event(models.Model):
@@ -16,9 +30,13 @@ class Event(models.Model):
     is_boys_event = models.BooleanField(default=False)  
     event_year = models.IntegerField(default=timezone.now().year)
 
+class AgeGroupEvent(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    age_group = models.ForeignKey(AgeGroup, on_delete=models.CASCADE)
+
     
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.event.name} {self.age_group.name}"
     
 
 HOUSE_CHOICES = (
@@ -63,20 +81,19 @@ class Student(models.Model):
     
 
 class Record(models.Model):
-    description = models.CharField(max_length=255)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='records')
-    event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name='record')
+    event = models.OneToOneField(AgeGroupEvent, on_delete=models.CASCADE, related_name='record')
     time_or_distance = models.CharField(max_length=255)
     event_year = models.IntegerField(default=timezone.now().year)
 
     def __str__(self):
-        return f'{self.student.full_name} - {self.event.name} : {self.time_or_distance}'
+        return f'{self.student.full_name} - {self.event.event.name} : {self.time_or_distance}'
     
     
 
 class EventParticipation(models.Model):
     id = models.AutoField(primary_key=True)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, related_name='events')
+    event = models.ForeignKey(AgeGroupEvent, on_delete=models.CASCADE, blank=True, related_name='events')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=True, related_name='event')
     attempt1  = models.CharField(max_length=255, default='0m')
     attempt2  = models.CharField(max_length=255, default='0m')
@@ -179,10 +196,10 @@ def validate_eventparticipation(sender,instance, **kwargs):
             
             if user_distance > record_distance:
               message = "Congratulations! new record"
-              Record.objects.filter(event=eventqualified.name).update(description=studentperson.full_name)
-              Record.objects.filter(event=eventqualified.name).update(time_or_distance=laptime_distance)
-              Record.objects.filter(event=eventqualified.name).update(event_year=timezone.now().year)
-              Record.objects.filter(event=eventqualified.name).update(student=studentperson)
+              Record.objects.filter(event=eventqualified.event.name).update(description=studentperson.full_name)
+              Record.objects.filter(event=eventqualified.event.name).update(time_or_distance=laptime_distance)
+              Record.objects.filter(event=eventqualified.event.name).update(event_year=timezone.now().year)
+              Record.objects.filter(event=eventqualified.event.name).update(student=studentperson)
 
 
 
@@ -216,9 +233,9 @@ def validate_eventparticipation(sender,instance, **kwargs):
             # time_difference = record_time - user_time
             # minutes, seconds = divmod(time_difference.seconds, 60)
             # milliseconds = time_difference.microseconds // 1000   
-            Record.objects.filter(event=eventqualified.name).update(name=studentperson.full_name)
-            Record.objects.filter(event=eventqualified.name).update(time_or_distance=user_time)
-            Record.objects.filter(event=eventqualified.name).update(event_year=timezone.now().year)
+            Record.objects.filter(event=eventqualified.event.name).update(name=studentperson.full_name)
+            Record.objects.filter(event=eventqualified.event.name).update(time_or_distance=user_time)
+            Record.objects.filter(event=eventqualified.event.name).update(event_year=timezone.now().year)
            # Record.objects.filter(event=eventqualified.record.event).update(event_year=timezone.now().year)
     
     

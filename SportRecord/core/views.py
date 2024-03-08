@@ -8,6 +8,7 @@ from django.db.models import Q
 import datetime
 from django.http import JsonResponse
 
+
 class UpdateEventsView(View):
     def get(self, request):
         queryset = Event.objects.all().order_by('event_year')
