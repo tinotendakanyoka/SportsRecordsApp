@@ -8,23 +8,23 @@ from django.db.models import Q
 import datetime
 from django.http import JsonResponse
 
-# class UpdateEventsView(View):
-#     def get(self, request):
-#         queryset = Event.objects.all().order_by('event_year')
-#         formset = modelformset_factory(Event, form=EventForm , extra=0)
+class UpdateEventsView(View):
+    def get(self, request):
+        queryset = Event.objects.all().order_by('event_year')
+        formset = modelformset_factory(Event, form=EventForm , extra=0)
 
-#         formset = formset(queryset=queryset)
-#         return render(request, 'core/update_event.html', {'formset': formset})
+        formset = formset(queryset=queryset)
+        return render(request, 'core/update_event.html', {'formset': formset})
 
-#     def post(self, request):
-#         formset = modelformset_factory(Event, form=EventForm)
-#         formset = formset(request.POST)
-#         if formset.is_valid():
-#             for form in formset:
-#                 if form.is_valid():
-#                     form.save()
-#             return redirect('events_update')
-#         return render(request, 'core/update_event.html', {'formset': formset})
+    def post(self, request):
+        formset = modelformset_factory(Event, form=EventForm)
+        formset = formset(request.POST)
+        if formset.is_valid():
+            for form in formset:
+                if form.is_valid():
+                    form.save()
+            return redirect('events_update')
+        return render(request, 'core/update_event.html', {'formset': formset})
 
 
 
@@ -53,7 +53,6 @@ class UpdateStudentsView(View):
 
 
 def dashboard(request):
-
     boys_events_qs = Event.objects.filter(is_boys_event=True).order_by('name')
     girls_events_qs = Event.objects.filter(is_boys_event=False).order_by('name')
     recent_event_winners = EventParticipation.objects.filter(position=1)
@@ -71,8 +70,32 @@ def dashboard(request):
 
     return render(request, 'core/index.html', context)
 
+def CreateMultipleParticipationsView(request, event_name):
 
-def CreateMultipleParticipationsView(request, age_group, gender, event_name):
+    event = Event.objects.get(name=event_name)  
+    EventParticipationFormSet = modelformset_factory(EventParticipation, fields=('id', 'event', 'student', 'attempt1', 'attempt2', 'attempt3', 'laptime_or_distance', 'position') , extra=12)
+    form = EventParticipationFormSet(queryset=EventParticipation.objects.none(), initial=[{'event': event}]) 
+
+
+    if request.method =='POST':
+        form = EventParticipationFormSet(request.POST)
+
+        try:
+
+            form.save(commit=False)
+            for instance in form:
+                if not instance.is_valid():
+                    pass
+                    
+                elif instance.is_valid():
+                    instance.save()
+        except:
+            pass
+        return redirect('edit_data') 
+    
+        
+
+    return render(request, 'create_event.html', {'form': form})
 
     event = Event.objects.get(name=event_name)  
     EventParticipationFormSet = modelformset_factory(EventParticipation, fields=('id', 'event', 'student', 'attempt1', 'attempt2', 'attempt3', 'laptime_or_distance', 'position') , extra=12)

@@ -1,10 +1,38 @@
 import csv
 from datetime import datetime
-from core.models import GENDER_CHOICES, Student, House
+
+from .models import GENDER_CHOICES, Student, House
 
 def convert_date(date_str):
-  """Converts date string in DD/MM/YY format to a datetime object."""
-  return datetime.strptime(date_str, "%d/%m/%y")
+ """Converts a date string in DD/MM/YY format to YYYY-MM-DD format.
+
+ This function splits the string at '/', reverses the order of the elements,
+ and joins them back with '-' to create a string in YYYY-MM-DD format.
+
+ Args:
+     date_str: The date string to be converted (e.g., '24/03/2008').
+
+ Returns:
+     The converted date string in YYYY-MM-DD format (e.g., '2008-03-24'), or
+     None if the string is not in the expected format.
+ """
+
+ try:
+   # Split the string at '/'
+   date_parts = date_str.split("/")
+   if len(date_parts) != 3:
+     return None  # Not in expected format (DD/MM/YY)
+
+   # Reverse the order of elements
+   date_parts.reverse()
+
+   # Join the parts with '-'
+   return "-".join(date_parts)
+ except ValueError:
+   # Handle potential errors (e.g., invalid characters)
+   print(f"Invalid date format: {date_str}")
+   return None
+
 
 def convert_gender(gender):
   """Converts single letter gender (M/F) to model's choice value (MALE/FEMALE)."""
@@ -38,6 +66,5 @@ def create_students_from_csv(csv_filename):
 
   print(f"Successfully created student objects from {csv_filename}.")
 
-create_students_from_csv('updated_list.csv')
 
 
