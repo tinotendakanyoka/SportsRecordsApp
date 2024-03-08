@@ -18,37 +18,37 @@
         </a>
         <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/u14">
               <i class="bi bi-circle"></i><span>U14</span>
             </a>
           </li>
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/u15">
               <i class="bi bi-circle"></i><span>U15</span>
             </a>
           </li>
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/u16">
               <i class="bi bi-circle"></i><span>U16</span>
             </a>
           </li>
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/u17">
               <i class="bi bi-circle"></i><span>U17</span>
             </a>
           </li>
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/u18">
               <i class="bi bi-circle"></i><span>U18</span>
             </a>
           </li>
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/u20">
               <i class="bi bi-circle"></i><span>U20</span>
             </a>
           </li>
           <li>
-            <a href="forms-elements.html">
+            <a href="/events/{{event.name}}/male/open">
               <i class="bi bi-circle"></i><span>OPEN</span>
             </a>
           </li>
@@ -178,13 +178,20 @@
                       </tr>
                     </thead>
                     <tbody>
+                      {% for event in recent_events %}
                       <tr>
-                        <th scope="row"><a href="#">#2457</a></th>
-                        <td>100m U15</td>
-                        <td><a href="#" class="text-primary">Tinotenda Kanyoka</a></td>
-                        <td>9.26s</td>
-                        <td><span class="badge bg-success">New Record</span></td>
+                        <th scope="row"><a href="#">{{event.event.event_num}}</a></th>
+                        <td>{{event.event.name}}</td>
+                        <td><a href="#" class="text-primary">{{event.student.full_name}}</a></td>
+                        <td>{{event.laptime_or_distance}}</td>
+                        <td>
+                          {% if event.event.record.student.full_name == event.student.full_name %}<span class="badge bg-success">New Record</span>
+                          {% else %}
+                          <span class="badge bg-success">{{ event.event.record.time_or_distance }}</span>
+                          {% endif %}
+                        </td>
                       </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
 
@@ -215,20 +222,22 @@
 
                   <table class="table table-borderless">
                     <thead>
+                      
                       <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Points</th>
                         <th scope="col">House</th>
-                        <th scope="col">Best Event</th>
                       </tr>
                     </thead>
                     <tbody>
+                      {% for performer in top_performers %}
                       <tr>
-                        <td><a href="#" class="text-primary fw-bold">Micheal Zulu</a></td>
-                        <td>201</td>
-                        <td class="fw-bold">Sparta</td>
-                        <td>Long Jump</td>
+                        <td><a href="#" class="text-primary fw-bold">{{ performer.full_name }}</a></td>
+                        <td>{{ performer.points }}</td>
+                        <td class="fw-bold">{{ performer.house.name }}</td>
+
                       </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
 

@@ -70,7 +70,7 @@ class Record(models.Model):
 class EventParticipation(models.Model):
     id = models.AutoField(primary_key=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, related_name='events')
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=True, related_name='students')
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, blank=True, related_name='event')
     attempt1  = models.CharField(max_length=255, default='0m')
     attempt2  = models.CharField(max_length=255, default='0m')
     attempt3  = models.CharField(max_length=255, default='0m')
