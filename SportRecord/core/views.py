@@ -6,6 +6,7 @@ from .forms import EventForm, StudentForm, EventParticipationForm
 from django.forms import modelformset_factory
 from django.db.models import Q
 import datetime
+from django.http import JsonResponse
 
 # class UpdateEventsView(View):
 #     def get(self, request):
@@ -127,4 +128,31 @@ def register_participants(request, age_group, gender, event_name):
 
 
         return render(request, 'core/register_participants.html', context = context)
+    
+    if request.method == "POST":
+        import json
+        data = json.loads(request.body.decode("utf-8"))
+        student = Student.objects.get(full_name=data["student"])
+        event = Event.objects.get(name=event_name)
+
+        if EventParticipation.objects.filter(event=event, student=student).exists():
+            return JsonResponse({
+                "error": "Student Already Registered"
+            })
+
+        else:
+            event_pariticip = EventParticipation(event=event, student=student)
+            event_pariticip.save()
+
+            return JsonResponse({
+                "Success": True,
+                "message": "Student Registered",
+
+            })
+
+
+        # return JsonResponse({
+        #     "Event": event_name,
+        #     "message": request.POST['student'],
+        # })
 

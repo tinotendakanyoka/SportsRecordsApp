@@ -8,7 +8,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Eligible Participants</h5>
-            <p>Click on a student to register them for this event.</p>
+            <p>Event Participants Registration</p>
 
             <!-- Table with stripped rows -->
             <table class="table datatable">
@@ -20,6 +20,7 @@
                   <th>Points</th>
                   <th>House</th>
                   <th data-type="date" data-format="YYYY/MM/DD">Date of Birth</th>
+                  <th>Register</th>
                 </tr>
               </thead>
               <tbody>
@@ -27,11 +28,11 @@
                 <form>
                     {% csrf_token %}
                     <tr>
-                        <td>{{ student.full_name }}</td>
+                        <td id="studentname">{{ student.full_name }}</td>
                         <td>{{ student.points }}</td>
                         <td>{{ student.house.name }}</td>
                         <td>{{ student.date_of_birth }}</td>
-                        <td></td>
+                        <td><button type="button" class="btn btn-primary btn-sm" data-studentname = "{{student.fullname}}" onclick="register('e', document.getElementById('studentname').textContent)">Register</button></td>
                     </tr>
                 </form>
                   {% endfor %}
@@ -45,4 +46,37 @@
       </div>
     </div>
   </section>
+  <script>
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    function register(event, student, ){
+            fetch(window.location.href, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({
+                    "event": event,
+                    "student": student,
+                }),
+            })
+            .then((response) => console.log(response.json()));
+    }
+  </script>
+
+
+
   {% endblock %}
