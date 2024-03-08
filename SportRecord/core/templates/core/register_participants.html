@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Eligible Participants</h5>
+            <p>Click on a student to register them for this event.</p>
+
+            <!-- Table with stripped rows -->
+            <table class="table datatable">
+              <thead>
+                <tr>
+                  <th>
+                    <b>N</b>ame
+                  </th>
+                  <th>Points</th>
+                  <th>House</th>
+                  <th data-type="date" data-format="YYYY/MM/DD">Date of Birth</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for student in students %}
+                <form>
+                    {% csrf_token %}
+                    <tr>
+                        <td>{{ student.full_name }}</td>
+                        <td>{{ student.points }}</td>
+                        <td>{{ student.house.name }}</td>
+                        <td>{{ student.date_of_birth }}</td>
+                        <td></td>
+                    </tr>
+                </form>
+                  {% endfor %}
+              </tbody>
+            </table>
+            <!-- End Table with stripped rows -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  {% endblock %}
