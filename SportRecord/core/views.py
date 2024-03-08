@@ -91,7 +91,7 @@ def CreateMultipleParticipationsView(request, event_name):
                     instance.save()
         except:
             pass
-        return redirect('edit_data') 
+ 
     
         
 
