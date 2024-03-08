@@ -64,7 +64,7 @@ class Student(models.Model):
 
 class Record(models.Model):
     description = models.CharField(max_length=255)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='records', blank=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='records', blank=True, null=True)
     event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name='record')
     time_or_distance = models.CharField(max_length=255)
     event_year = models.IntegerField(default=timezone.now().year)
