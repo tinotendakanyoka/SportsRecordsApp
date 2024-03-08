@@ -5,6 +5,7 @@ from .models import Event, Student, EventParticipation, House
 from .forms import EventForm, StudentForm, EventParticipationForm
 from django.forms import modelformset_factory
 from django.db.models import Q
+import datetime
 
 # class UpdateEventsView(View):
 #     def get(self, request):
@@ -95,22 +96,34 @@ def CreateMultipleParticipationsView(request, age_group, gender, event_name):
 
 def register_participants(request, age_group, gender, event_name):
 
+    gender = gender.upper()
+
     if request.method == 'GET':
         match age_group:
             case "u14":
-                eligible_participants = Student.objects.filter()
+                after_date = datetime.date(year=2010, month=3, day=9)
+                eligible_participants = Student.objects.filter(date_of_birth__gt=after_date, gender=gender)
             case "u15":
-                pass
+                after_date = datetime.date(year=2009, month=3, day=9)
+                eligible_participants = Student.objects.filter(date_of_birth__gt=after_date, gender=gender)
             case "u16":
-                pass
+                after_date = datetime.date(year=2008, month=3, day=9)
+                eligible_participants = Student.objects.filter(date_of_birth__gt=after_date, gender=gender)
             case "u17":
-                pass
+                after_date = datetime.date(year=2007, month=3, day=9)
+                eligible_participants = Student.objects.filter(date_of_birth__gt=after_date, gender=gender)
             case "u18":
-                pass
+                after_date = datetime.date(year=2006, month=3, day=9)
+                eligible_participants = Student.objects.filter(date_of_birth__gt=after_date, gender=gender)
             case "u20":
-                pass
+                after_date = datetime.date(year=2005, month=3, day=9)
+                eligible_participants = Student.objects.filter(date_of_birth__gt=after_date, gender=gender)
             case "open":
-                pass
+                eligible_participants = Student.objects.filter(gender=gender)
+
+        context = {
+            'students': eligible_participants,
+        }
 
 
         return render(request, 'core/register_participants.html', context = context)
