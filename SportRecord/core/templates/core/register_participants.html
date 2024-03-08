@@ -28,11 +28,11 @@
                 <form>
                     {% csrf_token %}
                     <tr>
-                        <td id="{{student.full_name}}">{{ student.full_name }}</td>
+                        <td>{{ student.full_name }}</td>
                         <td>{{ student.points }}</td>
                         <td>{{ student.house.name }}</td>
                         <td>{{ student.date_of_birth }}</td>
-                        <td><button type="button" class="btn btn-primary btn-sm" data-studentname = "{{student.fullname}}" onclick="register('e', document.getElementById('studentname').textContent)">Register</button></td>
+                        <td><button type="button" id="button" class="btn btn-primary btn-sm" value="{{student.full_name}}" onclick="register('e', this.getAttribute('value'))">Register</button></td>
                     </tr>
                 </form>
                   {% endfor %}
@@ -63,6 +63,7 @@
     return cookieValue;
 }
     function register(event, student, ){
+      console.log(student)
             fetch(window.location.href, {
                 method: "POST",
                 headers: {

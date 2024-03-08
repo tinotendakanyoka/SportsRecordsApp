@@ -1,7 +1,7 @@
 
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Event, Student, EventParticipation, House
+from .models import Event, Student, EventParticipation, House, AgeGroupEvent, AgeGroup
 from .forms import EventForm, StudentForm, EventParticipationForm
 from django.forms import modelformset_factory
 from django.db.models import Q
@@ -158,6 +158,7 @@ def register_participants(request, age_group, gender, event_name):
         data = json.loads(request.body.decode("utf-8"))
         student = Student.objects.get(full_name=data["student"])
         event = Event.objects.get(name=event_name)
+        event = AgeGroupEvent.objects.filter(event=event, age_group__name=age_group)
 
         if EventParticipation.objects.filter(event=event, student=student).exists():
             return JsonResponse({
