@@ -38,4 +38,6 @@ def create_students_from_csv(csv_filename):
 
   print(f"Successfully created student objects from {csv_filename}.")
 
+create_students_from_csv('updated_list.csv')
+
 
