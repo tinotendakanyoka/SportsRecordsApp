@@ -56,10 +56,14 @@ class Student(models.Model):
     
 
 class Record(models.Model):
+    description = models.CharField(max_length=255)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='records')
     event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name='record')
     time_or_distance = models.CharField(max_length=255)
     event_year = models.IntegerField(default=timezone.now().year)
+
+    def __str__(self):
+        return f'{self.student.full_name} - {self.event.name} : {self.time_or_distance}'
     
     
 
@@ -168,9 +172,10 @@ def validate_eventparticipation(sender,instance, **kwargs):
             
             if user_distance > record_distance:
               message = "Congratulations! new record"
-              Record.objects.filter(event=eventqualified.name).update(name=studentperson.full_name)
+              Record.objects.filter(event=eventqualified.name).update(description=studentperson.full_name)
               Record.objects.filter(event=eventqualified.name).update(time_or_distance=laptime_distance)
               Record.objects.filter(event=eventqualified.name).update(event_year=timezone.now().year)
+              Record.objects.filter(event=eventqualified.name).update(student=studentperson)
 
 
 
