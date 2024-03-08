@@ -3,6 +3,7 @@ from django.utils import timezone
 import datetime
 from datetime import datetime
 from django.db.models.signals import pre_save
+from django.forms import ChoiceField
 
 
 
@@ -37,12 +38,15 @@ class House(models.Model):
         return f'{self.name}: {self.points} Points'
 
         
-
+GENDER_CHOICES = (
+    ("MALE", "MALE"),
+    ("FEMALE", "FEMALE"),
+)
 
 class Student(models.Model):
     full_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
-    gender = models.BooleanField(default=False) 
+    gender = models.CharField(choices = GENDER_CHOICES, max_length=10)
     points = models.IntegerField(default=0)
     house = models.ForeignKey(House, on_delete=models.CASCADE, related_name='students')
     
@@ -52,8 +56,8 @@ class Student(models.Model):
     
 
 class Record(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    event = models.OneToOneField(Event, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='records')
+    event = models.OneToOneField(Event, on_delete=models.CASCADE, related_name='record')
     time_or_distance = models.CharField(max_length=255)
     event_year = models.IntegerField(default=timezone.now().year)
     
@@ -68,6 +72,7 @@ class EventParticipation(models.Model):
     attempt3  = models.CharField(max_length=255, default='0m')
     laptime_or_distance = models.CharField(max_length=255, default='0m')
     position = models.IntegerField(default=0)
+
     
     
     class Meta:
@@ -125,22 +130,21 @@ def validate_eventparticipation(sender,instance, **kwargs):
     elif pos_attained == 6:
         hsepts = 1
         
-    current_pts =  int(studentperson.points)
-    points_update = current_pts + hsepts 
+    current_student_pts =  int(studentperson.points)
+    points_update = current_student_pts + hsepts 
     Student.objects.filter(full_name=studentperson.full_name).update(points=points_update)
     print(studentperson.full_name, '  now has ',studentperson.points, ' points' )
        
       
-    if studentperson.gender:
-        current_bpts =  studentperson.hse.boy_pts
-        b_points_update = current_bpts + hsepts 
-        House.objects.filter(name=studentperson.hse.name).update(boy_pts=b_points_update)
-        print(studentperson.hse.name, '  now has ',studentperson.hse.boy_pts , ' points' )
-    else:
-        current_gpts =  studentperson.hse.girl_pts
-        g_points_update = current_gpts + hsepts 
-        House.objects.filter(name=studentperson.hse.name).update(girl_pts=g_points_update)
-        print(studentperson.hse.name, '  now has ',studentperson.hse.girl_pts , ' points' )
+    current_house_pts =  studentperson.house.points
+    house_points_update = current_house_pts + hsepts 
+    House.objects.filter(name=studentperson.house.name).update(points=house_points_update)
+    print(studentperson.house.name, '  now has ',studentperson.house.points , ' points' )
+    # else:
+    #     current_gpts =  studentperson.hse.girl_pts
+    #     g_points_update = current_gpts + hsepts 
+    #     House.objects.filter(name=studentperson.hse.name).update(girl_pts=g_points_update)
+    #     print(studentperson.hse.name, '  now has ',studentperson.hse.girl_pts , ' points' )
         
 
     #Capturing Current Record

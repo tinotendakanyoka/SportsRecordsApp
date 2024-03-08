@@ -130,15 +130,15 @@
           <div class="row">
             {% for index, house in houses %}
             <!-- Sales Card -->
-            <div class="col-xxl-3 col-md-6">
+            <div class="col-xxl-4 col-md-6">
               <div class="card info-card sales-card" style="background-color: {{house.house_color}}">
                 <div class="card-body">
                   <h5 class="card-title text-white">{{house.name}}</h5>
 
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
-                      <h6>{{house.points}}</h6>
-                      <span class="text-muted small pt-2 ps-1">position</span> <span class="text-white small pt-1 fw-bold">{{index}}</span>
+                      <h6 class = "text-white">{{house.points}}</h6>
+                      <span class="text-white small pt-2 ps-1">position</span> <span class="text-white small pt-1 fw-bold">{{index}}</span>
 
                     </div>
                   </div>
