@@ -4,6 +4,7 @@ from django.views import View
 from .models import Event, Student, EventParticipation, House
 from .forms import EventForm, StudentForm, EventParticipationForm
 from django.forms import modelformset_factory
+from django.db.models import Q
 
 # class UpdateEventsView(View):
 #     def get(self, request):
@@ -97,13 +98,19 @@ def register_participants(request, age_group, gender, event_name):
     if request.method == 'GET':
         match age_group:
             case "u14":
-                eligible_participants = Student.objects.filter(date_of_birth__gt)
+                eligible_participants = Student.objects.filter()
             case "u15":
+                pass
             case "u16":
+                pass
             case "u17":
+                pass
             case "u18":
+                pass
             case "u20":
+                pass
             case "open":
+                pass
 
 
         return render(request, 'core/register_participants.html', context = context)
