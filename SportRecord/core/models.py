@@ -21,8 +21,14 @@ class Event(models.Model):
         return f"{self.name}"
     
 
+HOUSE_CHOICES = (
+    ("MICHEAL", "MICHEAL"),
+    ("GABRIEL", "GABRIEL"),
+    ("RAPHAEL", "RAPHAEL"),
+)
+
 class House(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, choices=HOUSE_CHOICES)
     points = models.FloatField(default=0, null=False)
     house_color = models.CharField(max_length=25, null=False, blank=False, default='red')
     position = models.IntegerField(default=4)
