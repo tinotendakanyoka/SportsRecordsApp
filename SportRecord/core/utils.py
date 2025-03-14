@@ -110,9 +110,11 @@ def generate_report(event):
     results_table_skel = [
         ['Position', 'Participant Name', 'House', 'Distance/Laptime'],
 
-        ([f'{participation.athlete_position}', f'{participation.participant.first_name} {participation.participant.last_name}', f'{participation.participant.competitive_house.name}', f'{participation.best_attempt}'] for participation in event.participations.all())
-
     ]
+
+    for participation in event.participations.all():
+        results_table_skel.append([f'{participation.athlete_position}', f'{participation.participant.first_name} {participation.participant.last_name}', f'{participation.participant.competitive_house.name}', f'{participation.best_attempt}'])
+    
 
     table_styling = TableStyle([
         ('BACKGROUND', (0,0), (-1, 0), colors.white),
