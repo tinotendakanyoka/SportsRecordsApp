@@ -1,12 +1,13 @@
 
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Event, Student, EventParticipation, House, AgeGroupEvent, AgeGroup
+from .models import AthleticEvent as Event, Participant as Student, EventParticipation, CompetitiveHouse as House, AgeGroup
 from .forms import EventForm, StudentForm, EventParticipationForm
 from django.forms import modelformset_factory
 from django.db.models import Q
 import datetime
 from django.http import JsonResponse
+from .utils import initialize_data
 
 
 class UpdateEventsView(View):
@@ -38,7 +39,7 @@ class UpdateStudentsView(View):
         formset = modelformset_factory(Student, form=StudentForm , extra=0)
 
         formset = formset(queryset=queryset)
-        return render(request, 'update_student.html', {'formset': formset})
+        return render(request, 'update_event.html', {'formset': formset})
 
     def post(self, request):
         formset = modelformset_factory(Student, form=StudentForm)
@@ -48,16 +49,16 @@ class UpdateStudentsView(View):
                 if form.is_valid():
                     form.save()
             return redirect('students_update')
-        return render(request, 'update_student.html', {'formset': formset})
+        return render(request, 'update_event.html', {'formset': formset})
     
     
 
 
 def dashboard(request):
-    boys_events_qs = Event.objects.filter(is_boys_event=True).order_by('name')
-    girls_events_qs = Event.objects.filter(is_boys_event=False).order_by('name')
-    recent_event_winners = EventParticipation.objects.filter(position=1)
-    top_performers = Student.objects.all().order_by('-points')
+    boys_events_qs = Event.objects.filter(age_group__gender='M').order_by('title')
+    girls_events_qs = Event.objects.filter(age_group__gender='F').order_by('title')
+    recent_event_winners = EventParticipation.objects.filter(athlete_position=1)
+    top_performers = Student.objects.all().order_by('-individual_points')
 
 
     ordered_houses = enumerate(House.objects.all().order_by('-points'), start=1)
@@ -71,9 +72,9 @@ def dashboard(request):
 
     return render(request, 'core/index.html', context)
 
-def CreateMultipleParticipationsView(request, event_name):
+def CreateMultipleParticipationsView(request, event_id):
 
-    event = Event.objects.get(name=event_name)  
+    event = Event.objects.get(pk=event_id)  
     EventParticipationFormSet = modelformset_factory(EventParticipation, fields=('id', 'event', 'student', 'attempt1', 'attempt2', 'attempt3', 'laptime_or_distance', 'position') , extra=12)
     form = EventParticipationFormSet(queryset=EventParticipation.objects.none(), initial=[{'event': event}]) 
 
@@ -158,7 +159,7 @@ def register_participants(request, age_group, gender, event_name):
         data = json.loads(request.body.decode("utf-8"))
         student = Student.objects.get(full_name=data["student"])
         event = Event.objects.get(name=event_name)
-        event = AgeGroupEvent.objects.filter(event=event, age_group__name=age_group)
+        #event = AgeGroupEvent.objects.filter(event=event, age_group__name=age_group)
 
         if EventParticipation.objects.filter(event=event, student=student).exists():
             return JsonResponse({
@@ -181,3 +182,8 @@ def register_participants(request, age_group, gender, event_name):
         #     "message": request.POST['student'],
         # })
 
+
+def initialize(request):
+    initialize_data()
+
+    return redirect('dashboard')

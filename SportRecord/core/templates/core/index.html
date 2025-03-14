@@ -9,100 +9,36 @@
    <aside id="sidebar" class="sidebar">
 
     <ul class="sidebar-nav" id="sidebar-nav">
-
-      <li class="nav-heading">Boys Events</li>
-      {% for event in boys_events %}
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>{{event.name}}</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link collapsed" data-bs-target="#forms-nav-boys" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Boys Events</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="forms-nav-boys" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% for event in boys_events %}
           <li>
-            <a href="/events/{{event.name}}/male/u14">
-              <i class="bi bi-circle"></i><span>U14</span>
+            <a href="/events/{{event.pk}}/register">
+              <i class="bi bi-circle"></i><span>{{event}}</span>
             </a>
           </li>
-          <li>
-            <a href="/events/{{event.name}}/male/u15">
-              <i class="bi bi-circle"></i><span>U15</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/male/u16">
-              <i class="bi bi-circle"></i><span>U16</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/male/u17">
-              <i class="bi bi-circle"></i><span>U17</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/male/u18">
-              <i class="bi bi-circle"></i><span>U18</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/male/u20">
-              <i class="bi bi-circle"></i><span>U20</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/male/open">
-              <i class="bi bi-circle"></i><span>OPEN</span>
-            </a>
-          </li>
+          {% endfor %}
 
         </ul>
       </li>
-      {% endfor %}
-      <li class="nav-heading">Girls Events</li>
-
-      {% for event in girls_events %}
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>{{event.name}}</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link collapsed" data-bs-target="#forms-nav-girls" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Girls Events</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        <ul id="forms-nav-girls" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          {% for event in girls_events %}
           <li>
-            <a href="/events/{{event.name}}/female/u14">
-              <i class="bi bi-circle"></i><span>U14</span>
+            <a href="/events/{{event.pk}}/register">
+              <i class="bi bi-circle"></i><span>{{event}}</span>
             </a>
           </li>
-          <li>
-            <a href="/events/{{event.name}}/female/u15">
-              <i class="bi bi-circle"></i><span>U15</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/female/u16">
-              <i class="bi bi-circle"></i><span>U16</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/female/u17">
-              <i class="bi bi-circle"></i><span>U17</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/female/u18">
-              <i class="bi bi-circle"></i><span>U18</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/female/u20">
-              <i class="bi bi-circle"></i><span>U20</span>
-            </a>
-          </li>
-          <li>
-            <a href="/events/{{event.name}}/female/open">
-              <i class="bi bi-circle"></i><span>OPEN</span>
-            </a>
-          </li>
+          {% endfor %}
 
         </ul>
       </li>
-      {% endfor %}
 
 
 
@@ -115,10 +51,7 @@
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Dashboard</h1>
-      <nav>
-
-      </nav>
+      <h1></h1>
     </div><!-- End Page Title -->
 
     <section class="section dashboard">
@@ -131,14 +64,14 @@
             {% for index, house in houses %}
             <!-- Sales Card -->
             <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card" style="background-color: {{house.house_color}}">
+              <div class="card info-card sales-card" style="background-color: {{house.color}}">
                 <div class="card-body">
                   <h5 class="card-title text-white">{{house.name}}</h5>
 
                   <div class="d-flex align-items-center">
                     <div class="ps-3">
-                      <h6 class = "text-white">{{house.points}}</h6>
-                      <span class="text-white small pt-2 ps-1">position</span> <span class="text-white small pt-1 fw-bold">{{index}}</span>
+                      <h6 class = "text-white">{{index}}</h6>
+                      <span class="text-white small pt-2 ps-1">Points</span> <span class="text-white small pt-1 fw-bold">{{house.points}}</span>
 
                     </div>
                   </div>
@@ -181,7 +114,7 @@
                       {% for event in recent_events %}
                       <tr>
                         <th scope="row"><a href="#">{{event.event.event_num}}</a></th>
-                        <td>{{event.event.name}}</td>
+                        <td>{{event.title}}</td>
                         <td><a href="#" class="text-primary">{{event.student.full_name}}</a></td>
                         <td>{{event.laptime_or_distance}}</td>
                         <td>
@@ -232,9 +165,9 @@
                     <tbody>
                       {% for performer in top_performers %}
                       <tr>
-                        <td><a href="#" class="text-primary fw-bold">{{ performer.full_name }}</a></td>
-                        <td>{{ performer.points }}</td>
-                        <td class="fw-bold">{{ performer.house.name }}</td>
+                        <td><a href="#" class="text-primary fw-bold">{{ performer.first_name }} {{performer.last_name}}</a></td>
+                        <td>{{ performer.individual_points }}</td>
+                        <td class="fw-bold">{{ performer.competitive_house.name }}</td>
 
                       </tr>
                       {% endfor %}

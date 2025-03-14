@@ -61,7 +61,7 @@ class Record(models.Model):
     event = models.OneToOneField(AthleticEvent, on_delete=models.CASCADE)
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     record = models.FloatField()
-    record_date = models.DateField()
+    record_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.participant} - {self.event} - {self.record}'

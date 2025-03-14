@@ -1,7 +1,7 @@
 from django import forms
 
 
-from .models import Student, Event, EventParticipation
+from .models import Participant as Student, AthleticEvent as Event, EventParticipation
 
 
 class StudentForm(forms.ModelForm):
