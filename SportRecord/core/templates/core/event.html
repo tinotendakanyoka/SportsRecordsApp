@@ -66,8 +66,7 @@
                                                         <td>{student.first_name} {student.last_name}</td>
                                             
                                                         
-                                                        <td><button type="button" id="button" class="btn btn-primary btn-sm" onClick={() => this.register(student, this.props.event)} >Register</button>
-                                                            <button type="button" id="button" class="btn btn-primary btn-sm"onclick={this.deRegister} >Undo</button></td>
+                                                        <td><button type="button" id="button" class="btn btn-primary btn-sm" onClick={() => this.register(student, this.props.event)} >Register</button></td>
                                                     </tr>
                                                     ))} 
    
@@ -85,6 +84,7 @@
             constructor(props){
                 super(props);
                 this.getHouseName = this.getHouseName.bind(this)
+                this.handleRemove = this.handleRemove.bind(this)
                 this.state = {
                     event: this.props.event,
                     results: [],
@@ -98,13 +98,16 @@
                     <span>House Name</span>
                 )
             }
+            handleRemove(participant){
+                this.props.onDeregister(participant)
+            }
             render(){
                 return (
                     <div class="col-lg-8 col-sm-6 col-md-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Event Results Entry</h5>
-                                <p>Event Results Entry</p>
+                                <h5 class="card-title">Event Scores Entry</h5>
+                                <p>Event Scores Entry</p>
                                 <div class="row">
                                         {this.props.selectedParticipants.map((participant) =>(
                                             <form class="row p-4">
@@ -113,7 +116,7 @@
                                             <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 1"></input>
                                             <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 2"></input> 
                                             <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 3"></input> 
-                                            <button class="col-lg-1 col-md-1 col-sm-1 btn btn-danger btn-small" onClick={this}>X</button>
+                                            <button class="col-lg-1 col-md-1 col-sm-1 btn btn-danger btn-small" onClick={() => this.handleRemove(participant)}>X</button>
 
 
                                             </form>
@@ -154,7 +157,7 @@
             }
             handleDeregister(student) {
                 this.setState(prevState => ({
-                    selectedParticipants: prevState.selectedParticipants.filter(p => p.pk !== student.pk)
+                    selectedParticipants: prevState.selectedParticipants.filter(p => p.pk != student.pk)
                 }));
             }
             render(){
