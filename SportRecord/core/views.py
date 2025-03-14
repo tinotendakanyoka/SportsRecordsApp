@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 from django.db.models import Q
 import datetime
 from django.http import JsonResponse
-from .utils import initialize_data, generate_report
+from .utils import initialize_data, generate_report, bulk_upd
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from .serializers import EventParticipationSerializer, ParticipantSerializer
 
@@ -80,6 +80,8 @@ class EventParticipationListCreateAPIView(ListCreateAPIView):
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             created_participations.append(serializer.data)
+
+        bulk_upd(event)
 
         return Response(created_participations, status=status.HTTP_201_CREATED)
 

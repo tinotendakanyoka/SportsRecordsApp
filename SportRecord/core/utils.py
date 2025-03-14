@@ -8,7 +8,57 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
 from django.http import HttpResponse
 from django.utils import timezone
-from .models import EventParticipation
+from .models import EventParticipation, AthleticEvent, Record, Participant, CompetitiveHouse
+
+def bulk_upd(event):
+    all_event_participants = list(EventParticipation.objects.filter(event=event).order_by('-best_attempt'))
+        
+        # Assign rankings
+    for index, event_participant in enumerate(all_event_participants):
+        event_participant.athlete_position = index + 1
+
+        # **Bulk update to save all rankings in a single query**
+    EventParticipation.objects.bulk_update(all_event_participants, ['athlete_position'])
+
+        # **Update points for top 8 positions**
+    points_map = {1: 9, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1}
+    participants_to_update = []
+
+    for event_participant in all_event_participants:
+        position = event_participant.athlete_position
+        points = points_map.get(position, 0)  # Default to 0 if out of top 8
+
+        # Update individual and house points
+        event_participant.participant.individual_points += points
+        event_participant.participant.competitive_house.points += points
+
+        participants_to_update.append(event_participant.participant)
+        participants_to_update.append(event_participant.participant.competitive_house)
+
+        # **Check for new event record**
+        if position == 1 and event_participant.best_attempt > event_participant.event.current_record:
+            record, created = Record.objects.get_or_create(
+                event=event_participant.event,
+                participant=event_participant.participant,
+                record=event_participant.best_attempt,
+                record_date=timezone.now()
+            )
+            event_participant.event.current_record_holder_name = (
+                f'{event_participant.participant.first_name} {event_participant.participant.last_name}'
+            )
+            event_participant.event.current_record = event_participant.best_attempt
+            event_participant.event.record_date = timezone.now()
+            event_participant.event.save()
+
+        # **Bulk update participant and house points in a single query**
+    Participant.objects.bulk_update(
+        [p for p in participants_to_update if isinstance(p, Participant)], 
+        ['individual_points']
+    )
+    CompetitiveHouse.objects.bulk_update(
+        [p for p in participants_to_update if isinstance(p, CompetitiveHouse)], 
+        ['points']
+    )
 
 def get_student_info_from_csv(file_path):
     return pd.read_csv(file_path)
