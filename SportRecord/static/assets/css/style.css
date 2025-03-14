@@ -19,6 +19,7 @@ body {
   background: #f6f9ff;
   color: #444444;
   height: 100vh;
+  overflow: hidden;
 }
 
 a {
@@ -47,6 +48,8 @@ h6 {
   margin-top: 60px;
   padding: 20px 30px;
   transition: all 0.3s;
+  height: 90%;
+  overflow-y: auto;
 }
 
 @media (max-width: 1199px) {
@@ -1234,7 +1237,8 @@ h6 {
   color: #012970;
 }
 
-.scrollable {
+.scrollable-card {
 
   overflow-y: auto;
+  height: 80%;
 }

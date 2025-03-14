@@ -62,13 +62,13 @@
             }
             render() {
                 return (
-                        <div class="col-lg-4 col-sm-6 col-md-6 scrollable">
-                            <div class="card">
+                        <div class="col-lg-4 col-sm-6 col-md-6" >
+                            <div class="card scrollable-card">
                                 <div class="card-body">
                                     <h5 class="card-title">Eligible Participants</h5>
                                     <p>{{event}} Registration</p>
                                     <div class="table-responsive">
-                                    <table class="table datatable">
+                                    <table class="table datatable" >
                                         <thead>
                                             <tr>
                                                 <th>
@@ -157,7 +157,7 @@
             render(){
                 return (
                     <div class="col-lg-8 col-sm-6 col-md-6">
-                        <div class="card">
+                        <div class="card scrollable-card">
                             <div class="card-body">
                                 <h5 class="card-title">Event Scores Entry</h5>
                                 <p>Event Scores Entry</p>
@@ -225,7 +225,7 @@
             }
             render(){
                 return (
-                    <div class="container row p-3">
+                    <div class="row p-3">
                         <EligibleParticipants event={this.state.event}  onRegister={this.handleRegister} />
                         <EventResultsEntry event={this.state.event} selectedParticipants={this.state.selectedParticipants} onDeregister={this.handleDeregister} onUpdateAttempt={this.handleUpdateAttempt}/>
                     </div>
