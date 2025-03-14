@@ -74,7 +74,7 @@ class EventParticipation(models.Model):
     attempt2 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     attempt3 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
 
-    best_attempt = models.FloatField()
+    best_attempt = models.FloatField(default=0.00)
     athlete_position = models.IntegerField(default=6)
 
     class Meta:
