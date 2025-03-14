@@ -115,7 +115,7 @@ class EventParticipation(models.Model):
         EventParticipation.objects.bulk_update(all_event_participants, ['athlete_position'])
 
         # **Update points for top 8 positions**
-        points_map = {1: 10, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1}
+        points_map = {1: 9, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1}
         participants_to_update = []
 
         for event_participant in all_event_participants:
