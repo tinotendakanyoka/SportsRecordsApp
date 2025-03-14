@@ -82,58 +82,60 @@ class EventParticipation(models.Model):
 
     def save(self, *args, **kwargs):
         self.best_attempt = max(self.attempt1, self.attempt2, self.attempt3)
-        # update athlete position based on best attempt
+        super().save(*args, **kwargs)  # Save the current instance first
+
+        # Update athlete positions and points
         all_event_participants = EventParticipation.objects.filter(event=self.event).order_by('-best_attempt')
         for index, event_participant in enumerate(all_event_participants):
             event_participant.athlete_position = index + 1
-            # update points for house and individual
-            match event_participant.athlete_position:
-                case 1:
-                    if event_participant.best_attempt > event_participant.event.current_record:
-                        record, created = Record.objects.get_or_create(
-                            event=event_participant.event,
-                            participant=event_participant.participant,
-                            record=event_participant.best_attempt,
-                            record_date=timezone.now()
-                        )
-                        record.save()
-                        event_participant.event.current_record_holder_name = event_participant.participant.first_name + ' ' + event_participant.participant.last_name
-                        event_participant.event.current_record = event_participant.best_attempt
-                        event_participant.event.record_date = timezone.now()
-                        event_participant.event.save()
-                        event_participant.participant.individual_points += 10
-                        event_participant.participant.competitive_house.points += 10
-                    else:
-                        event_participant.participant.individual_points += 9
-                        event_participant.participant.competitive_house.points += 9
-                case 2:
-                    event_participant.participant.individual_points += 7
-                    event_participant.participant.competitive_house.points += 7
-                case 3:
-                    event_participant.participant.individual_points += 6
-                    event_participant.participant.competitive_house.points += 6
-                case 4:
-                    event_participant.participant.individual_points += 5
-                    event_participant.participant.competitive_house.points += 5
-                case 5:
-                    event_participant.participant.individual_points += 4
-                    event_participant.participant.competitive_house.points += 4
-                case 6:
-                    event_participant.participant.individual_points += 3
-                    event_participant.participant.competitive_house.points += 3
-                case 7:
-                    event_participant.participant.individual_points += 2
-                    event_participant.participant.competitive_house.points += 2
-                case 8:
-                    event_participant.participant.individual_points += 1
-                    event_participant.participant.competitive_house.points += 1
-                case _:
-                    event_participant.participant.individual_points += 0
-                    event_participant.participant.competitive_house.points += 0
-            event_participant.save()
 
-        
-        super().save(*args, **kwargs)
+            # Update points for house and individual
+            if event_participant.athlete_position == 1:
+                if event_participant.best_attempt > event_participant.event.current_record:
+                    record, created = Record.objects.get_or_create(
+                        event=event_participant.event,
+                        participant=event_participant.participant,
+                        record=event_participant.best_attempt,
+                        record_date=timezone.now()
+                    )
+                    record.save()
+                    event_participant.event.current_record_holder_name = f'{event_participant.participant.first_name} {event_participant.participant.last_name}'
+                    event_participant.event.current_record = event_participant.best_attempt
+                    event_participant.event.record_date = timezone.now()
+                    event_participant.event.save()
+                    event_participant.participant.individual_points += 10
+                    event_participant.participant.competitive_house.points += 10
+                else:
+                    event_participant.participant.individual_points += 9
+                    event_participant.participant.competitive_house.points += 9
+            elif event_participant.athlete_position == 2:
+                event_participant.participant.individual_points += 7
+                event_participant.participant.competitive_house.points += 7
+            elif event_participant.athlete_position == 3:
+                event_participant.participant.individual_points += 6
+                event_participant.participant.competitive_house.points += 6
+            elif event_participant.athlete_position == 4:
+                event_participant.participant.individual_points += 5
+                event_participant.participant.competitive_house.points += 5
+            elif event_participant.athlete_position == 5:
+                event_participant.participant.individual_points += 4
+                event_participant.participant.competitive_house.points += 4
+            elif event_participant.athlete_position == 6:
+                event_participant.participant.individual_points += 3
+                event_participant.participant.competitive_house.points += 3
+            elif event_participant.athlete_position == 7:
+                event_participant.participant.individual_points += 2
+                event_participant.participant.competitive_house.points += 2
+            elif event_participant.athlete_position == 8:
+                event_participant.participant.individual_points += 1
+                event_participant.participant.competitive_house.points += 1
+            else:
+                event_participant.participant.individual_points += 0
+                event_participant.participant.competitive_house.points += 0
+
+            # Save the participant and house points without calling save on EventParticipation again
+            event_participant.participant.save()
+            event_participant.participant.competitive_house.save()
     
     # validate age group when model is created
 
