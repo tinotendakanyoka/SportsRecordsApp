@@ -63,18 +63,7 @@ class EventParticipationListCreateAPIView(ListCreateAPIView):
         return EventParticipation.objects.filter(event=event)
     serializer_class = EventParticipationSerializer
 
-def event_participation_update(request, event_id):
-    if request.method == 'POST':
-        form = EventParticipationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard')
-    else:
-        form = EventParticipationForm()
-        event = Event.objects.get(pk=event_id)
-        event_participations = EventParticipation.objects.filter(event=event)
-        return render(request, 'core/event_participation_list.html', {'event_participations': event_participations, 'event': event, 'form': form})
-    
+
 
 def event(request, event_id):
     event = Event.objects.get(pk=event_id)
