@@ -107,12 +107,13 @@
                                 <p>Event Results Entry</p>
                                 <div class="row">
                                         {this.props.selectedParticipants.map((participant) =>(
-                                            <form class="row">
+                                            <form class="row p-4">
                                             <span class='col-lg-3 col-md-3 col-sm-3'>{participant.first_name} {participant.last_name}</span>
-                                            <span class='col-lg-3 col-md-3 col-sm-3'>{() => getHouseName(participant.house)}</span>
+                                            <span class='col-lg-2 col-md-3 col-sm-3'>{() => getHouseName(participant.house)}</span>
                                             <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 1"></input>
                                             <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 2"></input> 
-                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 3"></input>  
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 3"></input> 
+                                            <button class="col-lg-1 col-md-1 col-sm-1 btn btn-danger btn-small" onClick={this}>X</button>
 
 
                                             </form>
@@ -141,9 +142,15 @@
             }
 
             handleRegister(student){
-                this.setState(prevState => ({
-                    selectedParticipants: [...prevState.selectedParticipants, student]
-                }))
+                if (this.state.selectedParticipants.length >= 8) {
+                    alert("Maximum of 8 Participants Allowed");
+                } else if (this.state.selectedParticipants.indexOf(student) != -1) {
+                    alert("Participant is already registered");
+                } else {
+                    this.setState(prevState => ({
+                        selectedParticipants: [...prevState.selectedParticipants, student]
+                    }));
+                }
             }
             handleDeregister(student) {
                 this.setState(prevState => ({
