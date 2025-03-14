@@ -157,14 +157,15 @@
             }
             handleDeregister(student) {
                 this.setState(prevState => ({
-                    selectedParticipants: prevState.selectedParticipants.filter(p => p.pk != student.pk)
+                    selectedParticipants: prevState.selectedParticipants.filter(p => p.id != student.id)
                 }));
+                console.log(this.state.selectedParticipants)
             }
             render(){
                 return (
                     <div class="container row p-3">
-                        <EligibleParticipants event={this.state.event}  onRegister={this.handleRegister} onDeregister={this.handleDeregister}/>
-                        <EventResultsEntry event={this.state.event} selectedParticipants={this.state.selectedParticipants}/>
+                        <EligibleParticipants event={this.state.event}  onRegister={this.handleRegister} />
+                        <EventResultsEntry event={this.state.event} selectedParticipants={this.state.selectedParticipants} onDeregister={this.handleDeregister}/>
                     </div>
                 );
             };
