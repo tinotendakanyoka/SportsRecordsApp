@@ -108,12 +108,21 @@
                 this.props.onUpdateAttempt(participant, attempt, value)
             }
             handleFinalize(){
-                fetch(`/event/${this.props.event}/eventparticipation/`, {
+                const {event, selectedParticipants} = this.props;
+                const dataToSend = selectedParticipants.map(participant => ({
+                    event: event,
+                    participant: participant.id,
+                    attempt1: participant.attempt1,
+                    attempt2: participant.attempt2,
+                    attempt3: participant.attempt3
+                }));
+                console.log(dataToSend)
+                fetch(`/event/${event}/eventparticipation/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(this.props.selectedParticipants),
+                    body: JSON.stringify(dataToSend),
                 })
                 .then(response => response.json())
                 .then(data => {
