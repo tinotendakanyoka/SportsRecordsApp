@@ -114,9 +114,15 @@
                       {% for event in recent_events %}
                       <tr>
                         <th scope="row"><a href="#">{{event.event.event_num}}</a></th>
-                        <td>{{event.title}}</td>
-                        <td><a href="#" class="text-primary">{{event.student.full_name}}</a></td>
-                        <td>{{event.laptime_or_distance}}</td>
+                        <td>{{event.event}}</td>
+                        <td><a href="#" class="text-primary">{{event.participant.first_name|slice:1}} {{event.participant.last_name}}</a></td>
+                        <td>{{event.best_attempt}}
+                          {% if event.event.is_track_event %}
+                            s
+                          {% else %}
+                          m
+                          {% endif %}
+                        </td>
                         <td>
                           {% if event.event.record.student.full_name == event.student.full_name %}<span class="badge bg-success">New Record</span>
                           {% else %}
