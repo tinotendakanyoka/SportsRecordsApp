@@ -85,6 +85,7 @@
                 super(props);
                 this.getHouseName = this.getHouseName.bind(this)
                 this.handleRemove = this.handleRemove.bind(this)
+                this.handleInputChange = this.handleInputChange.bind(this)
                 this.state = {
                     event: this.props.event,
                     results: [],
@@ -101,6 +102,10 @@
             handleRemove(participant){
                 this.props.onDeregister(participant)
             }
+            handleInputChange(event, participant, attempt){
+                const value = event.target.value
+                this.props.onUpdateAttempt(participant, attempt, value)
+            }
             render(){
                 return (
                     <div class="col-lg-8 col-sm-6 col-md-6">
@@ -113,9 +118,9 @@
                                             <form class="row p-4">
                                             <span class='col-lg-3 col-md-3 col-sm-3'>{participant.first_name} {participant.last_name}</span>
                                             <span class='col-lg-2 col-md-3 col-sm-3'>{() => getHouseName(participant.house)}</span>
-                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 1"></input>
-                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 2"></input> 
-                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 3"></input> 
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 1" value={participant.attempt1 || ''} onChange={(e) => this.handleInputChange(e, participant, 'attempt1')}></input>
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 2" value={participant.attempt2 || ''} onChange={(e) => this.handleInputChange(e, participant, 'attempt2')}></input> 
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 3" value={participant.attempt3 || ''} onChange={(e) => this.handleInputChange(e, participant, 'attempt3')}></input> 
                                             <button class="col-lg-1 col-md-1 col-sm-1 btn btn-danger btn-small" onClick={() => this.handleRemove(participant)}>X</button>
 
 
@@ -141,6 +146,7 @@
                 };
                 this.handleRegister = this.handleRegister.bind(this)
                 this.handleDeregister = this.handleDeregister.bind(this)
+                this.handleUpdateAttempt = this.handleUpdateAttempt.bind(this)
 
             }
 
@@ -157,15 +163,23 @@
             }
             handleDeregister(student) {
                 this.setState(prevState => ({
-                    selectedParticipants: prevState.selectedParticipants.filter(p => p.id != student.id)
+                    selectedParticipants: prevState.selectedParticipants.filter(p => p !== student)
                 }));
                 console.log(this.state.selectedParticipants)
+            }
+            handleUpdateAttempt(participant, attempt, value){
+                this.setState(prevState => ({
+                    selectedParticipants: prevState.selectedParticipants.map(p => 
+                        p.id === participant.id ? { ...p, [attempt]: value } : p
+                    )
+                }));
+                console.log("Attempt ", attempt, " Value ", value)
             }
             render(){
                 return (
                     <div class="container row p-3">
                         <EligibleParticipants event={this.state.event}  onRegister={this.handleRegister} />
-                        <EventResultsEntry event={this.state.event} selectedParticipants={this.state.selectedParticipants} onDeregister={this.handleDeregister}/>
+                        <EventResultsEntry event={this.state.event} selectedParticipants={this.state.selectedParticipants} onDeregister={this.handleDeregister} onUpdateAttempt={this.handleUpdateAttempt}/>
                     </div>
                 );
             };
