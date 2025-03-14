@@ -3,9 +3,10 @@ from . import views
 
 urlpatterns = [
     path('', views.dashboard, name='index'),
-    # path('events/<event_name>/<gender>/<age_group>', views.CreateMultipleParticipationsView, name='events'),
-    path('events/<event_name>/<gender>/<age_group>', views.register_participants, name='register'),
-    # path('students', views.UpdateStudentsView.as_view(), name='students_update'),
-    path('results/<event_name>/', views.CreateMultipleParticipationsView, name = 'results'),
-    path('initialize/', views.initialize, name='initialize'),
+    path('events/<int:event_id>/', views.event, name='event'),
+    path('event/<int:event_id>/eventparticipation/', views.EventParticipationListCreateAPIView.as_view(), name='eventparticipation-list-create'),
+    path('event/<int:event_id>/eligibleparticipants/', views.EligibleParticipantsView.as_view(), name='eligibleparticipants'),
+    #path('eventparticipation/<int:pk>/', views.EventParticipationDetail.as_view(), name='eventparticipation-detail'),
+
+    #path('initialize/', views.initialize, name='initialize'),
 ]

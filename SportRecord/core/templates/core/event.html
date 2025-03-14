@@ -1,0 +1,166 @@
+{% extends 'core/base.html' %}
+{% block content %}
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class EligibleParticipants extends React.Component {
+            constructor(props) {
+                super(props);
+                this.register = this.register.bind(this);
+                this.state = {
+                    participants: [],
+                    selectedParticipants: [],
+                    isLoaded: false,
+                    error: null
+                };
+            }
+            componentDidMount() {
+                fetch('/event/{{event.pk}}/eligibleparticipants/')
+                    .then(res => res.json())
+                    .then(
+                        (result) => {
+                            this.setState({
+                                isLoaded: true,
+                                participants: result
+                            });
+                            console.log(result);
+                            $(document).ready(function() {
+                                $('.datatable').DataTable(
+                                    {
+                                        responsive: true
+                                    }
+                                );
+                            });
+                        },
+                        (error) => {
+                            this.setState({
+                                isLoaded: true,
+                            });
+                        }
+                    )
+            }
+            register(student, event){
+                console.log(student);
+                this.props.onRegister(student);
+            }
+            render() {
+                return (
+                        <div class="col-lg-4 col-sm-6 col-md-6 scrollable">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Eligible Participants</h5>
+                                    <p>{{event}} Registration</p>
+                                    <div class="table-responsive">
+                                    <table class="table datatable">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                Name
+                                                </th>
+                                                <th>Register</th>
+                                            </tr>    
+                                        </thead>
+                                        <tbody>
+                                                    {this.state.participants.map((student) => (
+                                                    <tr>
+                                                        <td>{student.first_name} {student.last_name}</td>
+                                            
+                                                        
+                                                        <td><button type="button" id="button" class="btn btn-primary btn-sm" onClick={() => this.register(student, this.props.event)} >Register</button>
+                                                            <button type="button" id="button" class="btn btn-primary btn-sm"onclick={this.deRegister} >Undo</button></td>
+                                                    </tr>
+                                                    ))} 
+   
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>    
+                        </div>
+                );
+            }
+        }
+
+        class EventResultsEntry extends React.Component {
+            constructor(props){
+                super(props);
+                this.getHouseName = this.getHouseName.bind(this)
+                this.state = {
+                    event: this.props.event,
+                    results: [],
+                    isLoaded: false,
+                    error: null
+                }
+                console.log(this.props.selectedParticipants)
+            }
+            getHouseName(){
+                return (
+                    <span>House Name</span>
+                )
+            }
+            render(){
+                return (
+                    <div class="col-lg-8 col-sm-6 col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Event Results Entry</h5>
+                                <p>Event Results Entry</p>
+                                <div class="row">
+                                        {this.props.selectedParticipants.map((participant) =>(
+                                            <form class="row">
+                                            <span class='col-lg-3 col-md-3 col-sm-3'>{participant.first_name} {participant.last_name}</span>
+                                            <span class='col-lg-3 col-md-3 col-sm-3'>{() => getHouseName(participant.house)}</span>
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 1"></input>
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 2"></input> 
+                                            <input class='col-lg-2 col-md-2 col-sm-2' placeholder="Att 3"></input>  
+
+
+                                            </form>
+                                        ))} 
+                                    <button class="btn btn-primary btn-sm">Finalize</button>  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        class Event extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    event: {{event.pk}},
+                    selectedParticipants: [],
+                    isLoaded: false,
+                    error: null
+                };
+                this.handleRegister = this.handleRegister.bind(this)
+                this.handleDeregister = this.handleDeregister.bind(this)
+
+            }
+
+            handleRegister(student){
+                this.setState(prevState => ({
+                    selectedParticipants: [...prevState.selectedParticipants, student]
+                }))
+            }
+            handleDeregister(student) {
+                this.setState(prevState => ({
+                    selectedParticipants: prevState.selectedParticipants.filter(p => p.pk !== student.pk)
+                }));
+            }
+            render(){
+                return (
+                    <div class="container row p-3">
+                        <EligibleParticipants event={this.state.event}  onRegister={this.handleRegister} onDeregister={this.handleDeregister}/>
+                        <EventResultsEntry event={this.state.event} selectedParticipants={this.state.selectedParticipants}/>
+                    </div>
+                );
+            };
+            
+        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<Event />);
+    </script>
+{% endblock %}

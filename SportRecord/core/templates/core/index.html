@@ -16,7 +16,7 @@
         <ul id="forms-nav-boys" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           {% for event in boys_events %}
           <li>
-            <a href="/events/{{event.pk}}/register">
+            <a href="/events/{{event.pk}}">
               <i class="bi bi-circle"></i><span>{{event}}</span>
             </a>
           </li>
@@ -31,7 +31,7 @@
         <ul id="forms-nav-girls" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           {% for event in girls_events %}
           <li>
-            <a href="/events/{{event.pk}}/register">
+            <a href="/events/{{event.pk}}">
               <i class="bi bi-circle"></i><span>{{event}}</span>
             </a>
           </li>

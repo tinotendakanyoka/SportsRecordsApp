@@ -24,15 +24,15 @@
                 </tr>
               </thead>
               <tbody>
-                {% for student in students %}
+                {% for student in eligible_participants %}
                 <form>
                     {% csrf_token %}
                     <tr>
-                        <td>{{ student.full_name }}</td>
-                        <td>{{ student.points }}</td>
-                        <td>{{ student.house.name }}</td>
+                        <td>{{ student.first_name }} {{student.last_name}}</td>
+                        <td>{{ student.individual_points }}</td>
+                        <td>{{ student.competitive_house.name }}</td>
                         <td>{{ student.date_of_birth }}</td>
-                        <td><button type="button" id="button" class="btn btn-primary btn-sm" value="{{student.full_name}}" onclick="register('e', this.getAttribute('value'))">Register</button></td>
+                        <td><button type="button" id="button" class="btn btn-primary btn-sm" value="{{student.pk}}" onclick="register('e', this.getAttribute('value'))">Register</button></td>
                     </tr>
                 </form>
                   {% endfor %}
