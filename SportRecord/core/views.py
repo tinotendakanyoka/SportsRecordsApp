@@ -13,6 +13,7 @@ from .serializers import EventParticipationSerializer, ParticipantSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 
 
 
@@ -57,11 +58,30 @@ def initialize(request):
     return redirect('dashboard')
 
 class EventParticipationListCreateAPIView(ListCreateAPIView):
+    serializer_class = EventParticipationSerializer
+
     def get_queryset(self):
         event_id = self.kwargs['event_id']
         event = Event.objects.get(pk=event_id)
         return EventParticipation.objects.filter(event=event)
-    serializer_class = EventParticipationSerializer
+
+    def create(self, request, *args, **kwargs):
+        event_id = self.kwargs['event_id']
+        event = Event.objects.get(pk=event_id)
+        participants_data = request.data
+
+        if not isinstance(participants_data, list):
+            return Response({"error": "Expected a list of participants"}, status=status.HTTP_400_BAD_REQUEST)
+
+        created_participations = []
+        for participant_data in participants_data:
+            participant_data['event'] = event_id
+            serializer = self.get_serializer(data=participant_data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            created_participations.append(serializer.data)
+
+        return Response(created_participations, status=status.HTTP_201_CREATED)
 
 
 

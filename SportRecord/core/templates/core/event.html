@@ -108,7 +108,7 @@
                 this.props.onUpdateAttempt(participant, attempt, value)
             }
             handleFinalize(){
-                fetch(`/event/${this.props.event}/eventparticipation`, {
+                fetch(`/event/${this.props.event}/eventparticipation/`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
