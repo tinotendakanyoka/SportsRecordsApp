@@ -1,5 +1,13 @@
 import pandas as pd
 from .models import Participant, CompetitiveHouse, AgeGroup
+from reportlab.lib.pagesizes import A4, portrait
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm, inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Image, Spacer
+from reportlab.lib.enums import TA_CENTER, TA_RIGHT
+from django.http import HttpResponse
+from django.utils import timezone
 
 def get_student_info_from_csv(file_path):
     return pd.read_csv(file_path)
@@ -71,3 +79,56 @@ def initialize_data():
                 gender=gender)
 
     print('Data has been successfully imported')
+
+def generate_report(event):
+    response = HttpResponse(content_type='applicaiton/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{event}.pdf"'
+
+    doc = SimpleDocTemplate(response, pagesize=portrait(A4))
+
+    elements = []
+
+    styles = getSampleStyleSheet()
+
+    doc.leftMargin = 50
+    doc.topMargin = 15
+
+    logo = 'data/logo.png'
+    img = Image(logo, width=30*mm, height=30*mm)
+    title_style = styles['Heading1']
+    title_style.alignment = 1
+    info_row = Paragraph("Hellenic Academy Official Results Sheet", title_style)
+            
+    elements.append(img)
+    elements.append(Spacer(1, 10))
+    elements.append(info_row)
+    elements.append(Spacer(1, 30))
+
+    event_info = Paragraph(f'Event: {event}', styles['Heading3'])
+    elements.append(event_info)
+    elements.append(Spacer(1, 15))
+    results_table_skel = [
+        ['Position', 'Participant Name', 'House', 'Distance/Laptime'],
+
+        ([f'{participation.athlete_position}', f'{participation.participant.first_name} {participation.participant.last_name}', f'{participation.participant.competitive_house.name}', f'{participation.best_attempt}'] for participation in event.participations.all())
+
+    ]
+
+    table_styling = TableStyle([
+        ('BACKGROUND', (0,0), (-1, 0), colors.white),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.black),
+        ('ALIGN', (0,0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0,0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,-1), 14.5),
+        ('BOTTOMPADDING', (0,0), (-1,0), 12),
+        ('GRID', (0,0), (-1,-1), 1, colors.black),
+
+    ])
+
+    results_table = Table(results_table_skel)
+    results_table.setStyle(table_styling)
+    elements.append(results_table)
+
+    doc.build(elements)
+
+    return response

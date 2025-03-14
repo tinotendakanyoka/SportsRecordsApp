@@ -71,7 +71,7 @@ from django.db import models
 from django.utils import timezone
 
 class EventParticipation(models.Model):
-    event = models.ForeignKey(AthleticEvent, on_delete=models.CASCADE)
+    event = models.ForeignKey(AthleticEvent, on_delete=models.CASCADE, related_name='participations')
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
     attempt1 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     attempt2 = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)

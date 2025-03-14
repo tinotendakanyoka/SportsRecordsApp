@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 from django.db.models import Q
 import datetime
 from django.http import JsonResponse
-from .utils import initialize_data
+from .utils import initialize_data, generate_report
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from .serializers import EventParticipationSerializer, ParticipantSerializer
 
@@ -88,3 +88,8 @@ class EventParticipationListCreateAPIView(ListCreateAPIView):
 def event(request, event_id):
     event = Event.objects.get(pk=event_id)
     return render(request, 'core/event.html', {'event': event})
+
+def report(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    return generate_report(event)
+
